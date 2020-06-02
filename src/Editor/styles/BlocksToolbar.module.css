@@ -1,0 +1,12 @@
+.blocksToolbar {
+  position: fixed;
+}
+
+.blocksToolbar button {
+  border: none;
+  padding: 0;
+  border-radius: 50rem;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+}
