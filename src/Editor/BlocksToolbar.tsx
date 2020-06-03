@@ -51,6 +51,7 @@ const BlocksToolbar = ({
         animate={isOpen ? 'open' : 'closed'}
         className="plus-button"
         onClick={() => setIsOpen(!isOpen)}
+        onBlur={() => setIsOpen(false)}
       >
         <AddIcon size={34} />
       </motion.button>
