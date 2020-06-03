@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { EditorState, Editor } from 'draft-js';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import AddIcon from './Icons/Add';
 import styles from './styles/BlocksToolbar.module.css';
 
@@ -10,8 +10,13 @@ interface BlocksToolbarProps {
   onBlockActionClick: (editorState: EditorState, inlineStyle: string) => void;
 }
 
-const BlocksToolbar = ({ editorRef, editorState, onBlockActionClick }: BlocksToolbarProps) => {
+const BlocksToolbar = ({
+  editorRef,
+  editorState,
+  onBlockActionClick,
+}: BlocksToolbarProps): JSX.Element => {
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const [left, setLeft] = useState(0);
   const [top, setTop] = useState(0);
   useEffect(() => {
@@ -41,9 +46,32 @@ const BlocksToolbar = ({ editorRef, editorState, onBlockActionClick }: BlocksToo
       }}
       transition={{ bounceDamping: 0 }}
     >
-      <button className="plus-button">
+      <motion.button
+        variants={{ closed: { rotate: 0 }, open: { rotate: 45 } }}
+        animate={isOpen ? 'open' : 'closed'}
+        className="plus-button"
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <AddIcon size={34} />
-      </button>
+      </motion.button>
+      <AnimatePresence>
+        {isOpen && (
+          <div className={styles.blockButtons}>
+            {['H1', 'H2', 'Cd', 'Img'].map((buttonType, index) => (
+              <motion.button
+                key={buttonType}
+                role="button"
+                initial={{ x: 10, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 10, opacity: 0 }}
+                transition={{ delay: index * 0.05, bounceDamping: 0 }}
+              >
+                {buttonType}
+              </motion.button>
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

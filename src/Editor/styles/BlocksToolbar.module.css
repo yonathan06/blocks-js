@@ -1,12 +1,40 @@
 .blocksToolbar {
   position: fixed;
+  z-index: 10;
 }
 
-.blocksToolbar button {
+.blocksToolbar > button {
   border: none;
   padding: 0;
   border-radius: 50rem;
   cursor: pointer;
   user-select: none;
   background-color: transparent;
+  outline: none;
+  width: 34px;
+  height: 34px;
+}
+
+.blockButtons {
+  position: absolute;
+  left: 115%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: auto;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+.blockButtons > button {
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 4px;
+  outline: none;
+  cursor: pointer;
+  border-radius: 50rem;
+  border: none;
+  margin-inline-end: 8px;
+  border: 1px solid black;
 }
