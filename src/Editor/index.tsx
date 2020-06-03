@@ -2,7 +2,8 @@ import React, { useRef, useCallback } from 'react';
 import { Editor, EditorState, RichUtils } from 'draft-js';
 import InlineToolbar from './InlineToolbar';
 import BlocksToolbar from './BlocksToolbar';
-import "draft-js/dist/Draft.css";
+import 'draft-js/dist/Draft.css';
+import './styles/main.css';
 
 interface BlockJSProps {
   editorState: EditorState;
@@ -19,10 +20,7 @@ const BlockJS = ({ editorState, onChange }: BlockJSProps) => {
     }
     return 'not-handled';
   };
-  const handleInlineStyleAction = (
-    editorState: EditorState,
-    inlineStyle: string,
-  ) => {
+  const handleInlineStyleAction = (editorState: EditorState, inlineStyle: string) => {
     onChange(RichUtils.toggleInlineStyle(editorState, inlineStyle));
   };
   const handleOnChange = useCallback(
@@ -34,7 +32,7 @@ const BlockJS = ({ editorState, onChange }: BlockJSProps) => {
   return (
     <div className="editorWrapper">
       <Editor
-        ref={current => editorRef.current = current}
+        ref={(current) => (editorRef.current = current)}
         editorState={editorState}
         onChange={handleOnChange}
         handleKeyCommand={handleKeyCommand}
