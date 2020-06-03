@@ -66,7 +66,7 @@ const InlineToolbar = ({ editorState, onInlineActionClick }: InlineToolbarProps)
   return (
     <motion.div
       onClick={(event) => event.preventDefault()}
-      ref={current => toolbarRef.current = current}
+      ref={(current) => (toolbarRef.current = current)}
       className={styles.inlineToolbar}
       initial={{ display: 'none' }}
       animate={{
