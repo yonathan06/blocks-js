@@ -27,14 +27,17 @@
 }
 
 .blockButtons > button {
-  width: 30px;
-  height: 30px;
-  background: rgba(255, 255, 255, 0.5);
-  padding: 4px;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 1);
   outline: none;
   cursor: pointer;
   border-radius: 50rem;
   border: none;
   margin-inline-end: 8px;
-  border: 1px solid black;
+  border: 2px solid black;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

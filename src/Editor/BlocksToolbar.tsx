@@ -3,11 +3,63 @@ import { EditorState, Editor } from 'draft-js';
 import { motion, AnimatePresence } from 'framer-motion';
 import AddIcon from './Icons/Add';
 import styles from './styles/BlocksToolbar.module.css';
+import HeadingIcon from './Icons/Heading';
+import ListIcon from './Icons/List';
+import CodeSlashIcon from './Icons/CodeSlash';
+import ImageIcon from './Icons/Image';
+
+export enum BlockType {
+  HeaderOne = 'header-one',
+  UnorderedList = 'unordered-list-item',
+  CodeBlock = 'code-block',
+  Image = 'image',
+}
+
+interface BlockButtonProps {
+  index: number;
+  blockType: BlockType;
+  onClick: (blockType: BlockType) => void;
+}
+
+const BlockButtonIcon = ({ blockType }: { blockType: BlockType }) => {
+  switch (blockType) {
+    case BlockType.HeaderOne:
+      return <HeadingIcon />;
+    case BlockType.UnorderedList:
+      return <ListIcon />;
+    case BlockType.CodeBlock:
+      return <CodeSlashIcon />;
+    case BlockType.Image:
+      return <ImageIcon />;
+    default:
+      return <span></span>;
+  }
+};
+
+const BlockButton: React.FunctionComponent<BlockButtonProps> = ({
+  index,
+  blockType,
+  onClick,
+  children,
+}) => {
+  return (
+    <motion.button
+      onClick={() => onClick(blockType)}
+      role="button"
+      initial={{ x: 10, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: 10, opacity: 0 }}
+      transition={{ delay: index * 0.05, bounceDamping: 0 }}
+    >
+      {children}
+    </motion.button>
+  );
+};
 
 interface BlocksToolbarProps {
   editorRef: Editor;
   editorState: EditorState;
-  onBlockActionClick: (editorState: EditorState, inlineStyle: string) => void;
+  onBlockActionClick: (editorState: EditorState, blockType: BlockType) => void;
 }
 
 const BlocksToolbar = ({
@@ -58,17 +110,15 @@ const BlocksToolbar = ({
       <AnimatePresence>
         {isOpen && (
           <div className={styles.blockButtons}>
-            {['H1', 'H2', 'Cd', 'Img'].map((buttonType, index) => (
-              <motion.button
-                key={buttonType}
-                role="button"
-                initial={{ x: 10, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 10, opacity: 0 }}
-                transition={{ delay: index * 0.05, bounceDamping: 0 }}
+            {Object.entries(BlockType).map(([key, value], index) => (
+              <BlockButton
+                key={key}
+                blockType={value}
+                index={index}
+                onClick={(blockType) => onBlockActionClick(editorState, blockType)}
               >
-                {buttonType}
-              </motion.button>
+                <BlockButtonIcon blockType={value} />
+              </BlockButton>
             ))}
           </div>
         )}

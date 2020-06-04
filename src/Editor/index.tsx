@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from 'react';
-import { Editor, EditorState, RichUtils } from 'draft-js';
+import { Editor, EditorState, RichUtils, DraftBlockType } from 'draft-js';
 import InlineToolbar from './InlineToolbar';
 import BlocksToolbar from './BlocksToolbar';
 import 'draft-js/dist/Draft.css';
@@ -29,6 +29,9 @@ const BlockJS = ({ editorState, onChange }: BlockJSProps) => {
     },
     [onChange],
   );
+  const handleBlockAction = (editorState: EditorState, blockType: DraftBlockType) => {
+    onChange(RichUtils.toggleBlockType(editorState, blockType));
+  };
   return (
     <div className="editorWrapper">
       <Editor
@@ -43,7 +46,7 @@ const BlockJS = ({ editorState, onChange }: BlockJSProps) => {
         <BlocksToolbar
           editorRef={editorRef.current}
           editorState={editorState}
-          onBlockActionClick={() => { }}
+          onBlockActionClick={handleBlockAction}
         />
       )}
     </div>
