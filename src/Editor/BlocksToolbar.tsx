@@ -79,7 +79,7 @@ const BlocksToolbar = ({
         `[data-offset-key="${anchorKey}-0-0"]`,
       ) as HTMLDivElement;
       if (anchorDiv && toolbarRef.current) {
-        setTop(anchorDiv.getBoundingClientRect().top - toolbarRef.current.offsetHeight / 4);
+        setTop(anchorDiv.getBoundingClientRect().top + anchorDiv.offsetHeight / 2);
       }
     }, 100);
     if (toolbarRef.current) {
