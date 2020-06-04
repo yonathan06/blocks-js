@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EditorState } from "draft-js";
+import { EditorState } from 'draft-js';
 import Editor from './Editor';
 
 function App() {
