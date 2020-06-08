@@ -1,5 +1,14 @@
 import React, { useRef, useCallback } from 'react';
-import { Editor, EditorState, RichUtils, DraftBlockType } from 'draft-js';
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  DraftBlockType,
+  ContentBlock,
+  genKey,
+  ContentState,
+  SelectionState,
+} from 'draft-js';
 import InlineToolbar from './InlineToolbar';
 import BlocksToolbar from './BlocksToolbar';
 import 'draft-js/dist/Draft.css';
@@ -9,6 +18,26 @@ interface BlockJSProps {
   editorState: EditorState;
   onChange: (editorState: EditorState) => void;
 }
+
+const addEmptyBlock = (editorState: EditorState, type: string) => {
+  const newBlock = new ContentBlock({
+    key: genKey(),
+    type,
+    text: '',
+  });
+
+  const contentState = editorState.getCurrentContent();
+  const newBlockMap = contentState.getBlockMap().set(newBlock.getKey(), newBlock);
+  const newContentState = ContentState.createFromBlockArray(newBlockMap.toArray());
+  const newSelectionState = new SelectionState({
+    anchorKey: newBlock.getKey(),
+    focusKey: newBlock.getKey(),
+  });
+  return EditorState.forceSelection(
+    EditorState.push(editorState, newContentState, 'insert-fragment'),
+    newSelectionState,
+  );
+};
 
 const BlockJS = ({ editorState, onChange }: BlockJSProps) => {
   const editorRef = useRef<Editor | null>();
@@ -30,7 +59,16 @@ const BlockJS = ({ editorState, onChange }: BlockJSProps) => {
     [onChange],
   );
   const handleBlockAction = (editorState: EditorState, blockType: DraftBlockType) => {
-    onChange(RichUtils.toggleBlockType(editorState, blockType));
+    const contentState = editorState.getCurrentContent();
+    const blockCurrentText = contentState.getPlainText();
+    if (blockCurrentText.length > 0) {
+      onChange(addEmptyBlock(editorState, blockType));
+    } else {
+      onChange(RichUtils.toggleBlockType(editorState, blockType));
+      setTimeout(() => {
+        editorRef.current?.focus();
+      }, 0);
+    }
   };
   return (
     <div className="editorWrapper">
