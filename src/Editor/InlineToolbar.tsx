@@ -52,6 +52,11 @@ const InlineToolbar = ({ editorState, onInlineActionClick }: InlineToolbarProps)
     const start = selection.getStartOffset();
     const end = selection.getEndOffset();
     const hasSelection = anchorKey !== focusKey ? true : start !== end;
+    const anchorBlockType = editorState.getCurrentContent().getBlockForKey(anchorKey).getType();
+    const focusBlockType = editorState.getCurrentContent().getBlockForKey(focusKey).getType();
+    if (anchorBlockType === 'code-block' || focusBlockType === 'code-block') {
+      return null;
+    }
     if (hasSelection) {
       const selectionRect = getVisibleSelectionRect(window);
       if (selectionRect) {
