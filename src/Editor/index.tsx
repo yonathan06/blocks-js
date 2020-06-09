@@ -8,11 +8,14 @@ import {
   genKey,
   ContentState,
   SelectionState,
+  Modifier,
 } from 'draft-js';
 import InlineToolbar from './InlineToolbar';
 import BlocksToolbar from './BlocksToolbar';
 import 'draft-js/dist/Draft.css';
+import '../prism-theme.css';
 import './styles/main.css';
+import CodeBlock from './CodeBlock';
 
 interface BlockJSProps {
   editorState: EditorState;
@@ -40,31 +43,43 @@ const addEmptyBlock = (editorState: EditorState, type: string) => {
 };
 
 const BlockJS = ({ editorState, onChange }: BlockJSProps) => {
-  const editorRef = useRef<Editor | null>();
-  const handleKeyCommand = (command: string, editorState: EditorState) => {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      onChange(newState);
-      return 'handled';
-    }
-    return 'not-handled';
-  };
-  const handleInlineStyleAction = (editorState: EditorState, inlineStyle: string) => {
-    onChange(RichUtils.toggleInlineStyle(editorState, inlineStyle));
-  };
+  const editorRef = useRef<Editor>(null);
   const handleOnChange = useCallback(
     (editorState: EditorState) => {
       onChange(editorState);
     },
     [onChange],
   );
+  const handleKeyCommand = (command: string, editorState: EditorState) => {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+    if (newState) {
+      handleOnChange(newState);
+      return 'handled';
+    }
+
+    return 'not-handled';
+  };
+  const handleOnTab = useCallback(() => {
+    const newContentState = Modifier.replaceText(
+      editorState.getCurrentContent(),
+      editorState.getSelection(),
+      '    ',
+    );
+    handleOnChange(EditorState.push(editorState, newContentState, 'insert-characters'));
+    setTimeout(() => {
+      editorRef.current?.focus();
+    }, 0);
+  }, [handleOnChange, editorState]);
+  const handleInlineStyleAction = (editorState: EditorState, inlineStyle: string) => {
+    handleOnChange(RichUtils.toggleInlineStyle(editorState, inlineStyle));
+  };
   const handleBlockAction = (editorState: EditorState, blockType: DraftBlockType) => {
     const contentState = editorState.getCurrentContent();
     const blockCurrentText = contentState.getPlainText();
     if (blockCurrentText.length > 0) {
-      onChange(addEmptyBlock(editorState, blockType));
+      handleOnChange(addEmptyBlock(editorState, blockType));
     } else {
-      onChange(RichUtils.toggleBlockType(editorState, blockType));
+      handleOnChange(RichUtils.toggleBlockType(editorState, blockType));
       setTimeout(() => {
         editorRef.current?.focus();
       }, 0);
@@ -73,10 +88,11 @@ const BlockJS = ({ editorState, onChange }: BlockJSProps) => {
   return (
     <div className="editorWrapper">
       <Editor
-        ref={(current) => (editorRef.current = current)}
+        ref={editorRef}
         editorState={editorState}
         onChange={handleOnChange}
         handleKeyCommand={handleKeyCommand}
+        onTab={handleOnTab}
         placeholder="Start typing..."
       />
       <InlineToolbar editorState={editorState} onInlineActionClick={handleInlineStyleAction} />
